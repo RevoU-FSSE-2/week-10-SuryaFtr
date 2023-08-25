@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const { JWT_SIGN } = require('../config/jwt.js')
 
 const register = async (req, res) => {
-    const { username, password } = req.body
+    const { username, password, role } = req.body
 
     try {
         const user = await req.db.collection('users').findOne({ username })
@@ -14,7 +14,7 @@ const register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10)
 
-        const newUser = await req.db.collection('users').insertOne({ username, password: hashedPassword })
+        const newUser = await req.db.collection('users').insertOne({ username, password: hashedPassword, role })
         res.status(200).json({
             message: 'User successfully registered',
             data: newUser
@@ -31,7 +31,7 @@ const login = async (req, res) => {
     const isPasswordCorrect = await bcrypt.compare(password, user.password)
 
     if (isPasswordCorrect) {
-        const token = jwt.sign({ username: user.username, id: user._id }, JWT_SIGN)
+        const token = jwt.sign({ username: user.username, id: user._id, role: user.role }, JWT_SIGN)
         res.status(200).json({
             message: 'User successfully logged in',
             data: token
