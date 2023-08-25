@@ -1,6 +1,7 @@
 const express = require('express')
 const databaseMiddleware = require('./middleware/databaseMiddleware.js')
 const authRouter = require('./routes/auth-route.js')
+const transferRouter = require('./routes/transfer-route.js')
 
 const app = express();
 
@@ -13,7 +14,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/v1/auth/', authRouter)
-app.use('/v1/transfer/', () => { })
+app.use('/v1/transfer/', transferRouter)
 
 const port = 3000;
 
