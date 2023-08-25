@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const { JWT_SIGN } = require('../config/jwt.js')
 
 const register = async (req, res) => {
     const { username, password } = req.body
@@ -30,7 +31,7 @@ const login = async (req, res) => {
     const isPasswordCorrect = await bcrypt.compare(password, user.password)
 
     if (isPasswordCorrect) {
-        const token = jwt.sign({ username: user.username, id: user._id }, 'sign')
+        const token = jwt.sign({ username: user.username, id: user._id }, JWT_SIGN)
         res.status(200).json({
             message: 'User successfully logged in',
             data: token

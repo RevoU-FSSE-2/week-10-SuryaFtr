@@ -1,7 +1,11 @@
+require('dotenv').config()
+
 const express = require('express')
 const databaseMiddleware = require('./middleware/databaseMiddleware.js')
 const authRouter = require('./routes/auth-route.js')
 const transferRouter = require('./routes/transfer-route.js')
+const authmiddleware = require('./middleware/authentication-middleware.js')
+
 
 const app = express();
 
@@ -14,10 +18,10 @@ app.get('/', (req, res) => {
 })
 
 app.use('/v1/auth/', authRouter)
-app.use('/v1/transfer/', transferRouter)
+app.use('/v1/transfer/', authmiddleware, transferRouter)
 
 const port = 3000;
 
 app.listen(port, () => {
-    console.log(`Server is running on port http://localhost:${port}`)
+    console.log(`Server is running on http://localhost:${port}`)
 })
