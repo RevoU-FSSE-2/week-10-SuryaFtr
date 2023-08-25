@@ -9,7 +9,9 @@ const register = async (req, res) => {
         const user = await req.db.collection('users').findOne({ username })
 
         if (user) {
-            throw new Error('Username already exists')
+            res.status(400).json({
+                message: 'Username already exists'
+            })
         }
 
         const hashedPassword = await bcrypt.hash(password, 10)

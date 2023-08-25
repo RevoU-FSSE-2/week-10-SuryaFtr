@@ -7,7 +7,18 @@ const transferRouter = require('./routes/transfer-route.js')
 const authmiddleware = require('./middleware/authentication-middleware.js')
 const authorizationMiddleware = require('./middleware/authorization-middleware.js')
 
+const swaggerUi = require('swagger-ui-express');
+const yaml = require('yaml')
+const fs = require('fs')
+
+const openApiPath = './docs/openapi.yaml'
+const file = fs.readFileSync(openApiPath, 'utf8')
+
+const swaggerDocument = yaml.parse(file)
+
 const app = express();
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use(express.json())
 
