@@ -24,6 +24,10 @@ const swaggerDocument = yaml.parse(file)
 const app = express();
 app.use(express.json())
 app.use(databaseMiddleware)
+
+app.get('/', (req, res) => {
+    res.send('Transfer Request Managament API')
+})
 app.use('/v1/transfer/', authmiddleware, authorizationMiddleware, transferRouter)
 app.use('/v1/transfer/', authmiddleware, transferRouter)
 
@@ -32,12 +36,6 @@ app.use(OpenApiValidator.middleware({
     apiSpec: openApiPath,
     validateRequests: true,
 }))
-
-
-
-app.get('/', (req, res) => {
-    res.send('Transfer Request Managament API')
-})
 
 app.use('/v1/auth/', authRouter)
 
