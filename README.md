@@ -60,10 +60,13 @@ npm start
 
 We using **Swagger** for comprehensive API documentation detailing endpoints, validation, and usage instructions. Access the documentation at `/api-docs` on the running server.
 
+Here is the deploy link for API swagger UI : https://drab-puce-dove-toga.cyclic.cloud/api-docs/
+
 ## Deployment
 
 Ensure you set environment variables according to the server environment.
 
+Here is the deploy link for API  : https://drab-puce-dove-toga.cyclic.cloud/
 
 ## Directory Structure
 

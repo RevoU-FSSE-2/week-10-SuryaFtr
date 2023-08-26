@@ -26,7 +26,7 @@ app.use(express.json())
 app.use(databaseMiddleware)
 
 app.get('/', (req, res) => {
-    res.send('Transfer Request Managament API')
+    res.send('Transfer Request Management API')
 })
 app.use('/v1/transfer/', authmiddleware, authorizationMiddleware, transferRouter)
 app.use('/v1/transfer/', authmiddleware, transferRouter)
