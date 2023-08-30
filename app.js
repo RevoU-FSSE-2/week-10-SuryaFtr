@@ -1,55 +1,31 @@
 require('dotenv').config()
 
 const express = require('express')
-const databaseMiddleware = require('./middleware/databaseMiddleware.js')
-const authRouter = require('./routes/auth-route.js')
-const transferRouter = require('./routes/transfer-route.js')
-const authmiddleware = require('./middleware/authentication-middleware.js')
-const authorizationMiddleware = require('./middleware/authorization-middleware.js')
-
-const swaggerUi = require('swagger-ui-express');
+const bodyParser = require('body-parser')
+const OpenApiValidator = require('express-openapi-validator')
 const yaml = require('yaml')
-const fs = require('fs')
+const swaggerUi = require('swagger-ui-express')
+const databaseMiddleware = require('./middleware/database.js')
+const authRouter = require('./routes/auth.js')
+const errorHandlerMiddleware = require('./middleware/error-handler.js')
+const transferReqRouter = require('./routes/transfer-req.js')
+const { authenticationMiddleware } = require('./middleware/auth.js')
 
-const OpenApiValidator = require('express-openapi-validator');
+const app = express()
+const port = process.env.PORT || 3000
 
-
-const openApiPath = './docs/openapi.yaml'
-const file = fs.readFileSync(openApiPath, 'utf8')
-
-const swaggerDocument = yaml.parse(file)
-
-
-
-const app = express();
-app.use(express.json())
+app.use(bodyParser.json())
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(yaml.parse(require('fs').readFileSync('./doc/openapi.yaml', 'utf8'))))
+app.use(OpenApiValidator.middleware({
+    apiSpec: './doc/openapi.yaml'
+}))
 app.use(databaseMiddleware)
 
-app.get('/', (req, res) => {
-    res.send('Transfer Request Management API')
-})
-app.use('/v1/transfer/', authmiddleware, authorizationMiddleware, transferRouter)
-app.use('/v1/transfer/', authmiddleware, transferRouter)
+app.use('/v1/auth', authRouter)
+app.use('/v1/transfer', authenticationMiddleware, transferReqRouter)
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
-app.use(OpenApiValidator.middleware({
-    apiSpec: openApiPath,
-    validateRequests: true,
-}))
-
-app.use('/v1/auth/', authRouter)
-
-
-app.use((err, req, res, next) => {
-    console.log(err, `<=================== error ==================`);
-    res.status(err.status || 500).json({
-        message: err.message,
-        errors: err.errors,
-    })
-})
-
-const port = 3000;
+app.use(errorHandlerMiddleware)
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`)
+    console.log(`Server running on port ${port}`)
 })
